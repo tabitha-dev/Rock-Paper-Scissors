@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors Game</title>
+    <style>
+           body {
+          font-family: 'Arial', sans-serif;
+          background: linear-gradient(to right, #f4f4f4, #e8e8e8);
+          color: #333;
+          margin: 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+                overflow: hidden;
+      }
+      #backgroundContainer {
+          width: 100%;
+          height: 100%;
+          position: fixed; 
+          top: 0;
+          left: 0;
+          background-size: contain; /* Fit the image inside without distortion */
+          background-position: center; /* Center the image within the container */
+          background-repeat: repeat; 
+      }
+
+
+
+      #gameContainer {
+          text-align: center;
+          background: rgba(255, 255, 255, 0.7); 
+          padding: 20px;
+          border-radius: 10px;
+          box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+          transition: all 0.3s ease;
+          max-width: 90%;
+          margin: auto;
+          position: relative; /* Ensure it's above the background */
+          top: 50%;
+          transform: translateY(-50%);
+          z-index: 10; /* Higher than the background */
+       display: none; /* Hide the game container initially */
+      }
+
+      .choice-container {
+          display: flex;
+          justify-content: center;
+          margin: 20px 0;
+      }
+
+      .choice {
+          width: 80px;
+          height: 80px;
+          margin: 0 10px;
+          transition: transform 0.2s ease;
+      }
+
+      .choice:hover {
+          transform: scale(1.1);
+      }
+
+      button {
+          background-color: #007bff;
+          color: white;
+          border: none;
+          padding: 15px 30px;
+          margin: 10px;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
+          font-size: 1.2em;
+      }
+
+      button:hover {
+          background-color: #0056b3;
+          transform: scale(1.05);
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      #result {
+          margin-top: 20px;
+          font-size: 1.4em;
+          color: #007bff;
+          padding: 10px;
+          border-radius: 5px;
+          background-color: #f9f9f9;
+      }
+
+      @media (max-width: 600px) {
+          .choice-container {
+              flex-direction: column;
+          }
+      }
+            /* Medium devices (tablets, 600px and up) */
+            @media (min-width: 600px) {
+                .choice {
+                    width: 100px;
+                    height: 100px;
+                }
+
+                button {
+                    padding: 15px 30px;
+                    font-size: 1.2em;
+                }
+            }
+
+            /* Large devices (desktops, 900px and up) */
+            @media (min-width: 900px) {
+                .choice-container {
+                    flex-direction: row; 
+                }
+
+                .choice {
+                    width: 120px; 
+                    height: 120px;
+                }
+
+                button {
+                    padding: 15px 30px;
+                    font-size: 1.4em; 
+                }
+            }
+            /* Responsive adjustments for small screens */
+            @media (max-width: 600px) {
+                .choice-container {
+                    flex-direction: column; 
+                }
+
+                .choice {
+                    width: 80px; 
+                    height: 80px;
+                    margin: 10px auto; 
+                }
+
+                button {
+                    padding: 10px 20px; 
+                    font-size: 1em;
+                }
+
+                #gameContainer {
+                    width: 100%; 
+                    padding: 10px; 
+                }
+            }
+            /* Background classes */
+            .background-neutral { background-image: url('Neutral Background.img'); }
+            .background-win { background-image: url('Win Background.img'); }
+            .background-lose { background-image: url('Lose Background.img'); }
+            .background-tie { background-image: url('Tie Background.img'); }
+
+            /* Transition effect */
+            #backgroundContainer {
+                transition: background-image 0.5s ease-in-out;
+            }
+            #splashScreen {
+                text-align: center;
+                padding: 20px;
+                background: rgba(255, 255, 255, 0.7);
+                border-radius: 10px;
+                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+                max-width: 90%;
+                margin: auto;
+                position: relative;
+                top: 50%;
+                transform: translateY(-50%);
+                z-index: 10;
+            }
+
+            /* Style for the play button container */
+      #playButtonContainer {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          z-index: 11; /* Higher z-index to ensure visibility */
+      }
+
+      /* Style for the play button */
+      #playButton {
+          background-color: #007bff;
+          color: white;
+          border: none;
+          padding: 15px 30px;
+          margin: 10px;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
+          font-size: 1.2em;
+          display: block; 
+      }
+            /* Always show the "Play" button for screens with a minimum width of 900px (adjust this value as needed) */
+            @media (min-width: 900px) {
+                #playButton {
+                    display: block;
+                }
+            }
+            /* Style for the scoreboard */
+      #scoreboard {
+          background-color: #007bff;
+          color: white;
+          padding: 10px;
+          border-radius: 5px;
+          text-align: center;
+          font-size: 1.2em;
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          z-index: 1000; /* Ensure it's above other elements */
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      }
+
+      #scoreboard h2 {
+          margin: 0;
+          padding-bottom: 10px;
+          border-bottom: 1px solid white;
+      }
+
+      #scoreboard p {
+          margin: 5px 0;
+      }
+
+      #highScore {
+          font-weight: bold;
+          font-size: 1.4em;
+      }
+
+    </style>
+</head>
+<body>
+  <div id="backgroundContainer" class="background-neutral">
+     <div id="gameContainer">
+        <div class="choice-container">
+            <div id="playerChoice" class="choice"></div>
+            <div id="computerChoice" class="choice"></div>
+        </div>
+        <div id="result"></div>
+        <button id="rock">Rock</button>
+        <button id="paper">Paper</button>
+        <button id="scissors">Scissors</button>
+    </div>
+   <div id="scoreboard">
+    <h2>Scoreboard</h2>
+    <p id="wins">Wins: 0</p>
+    <p id="losses">Losses: 0</p>
+    <p id="ties">Ties: 0</p>
+    <p id="highScore">High Score: 0</p>
+</div>
+<div id="splashScreen">
+    <img src="splash.img" alt="Splash Image" style="width: 100%; height: auto;">
+   <div id="playButtonContainer">
+        <button id="playButton">Play</button>
+    </div>
+</div>
+</div>
+
+<script>
+   document.addEventListener('DOMContentLoaded', () => {
+        // Audio elements for playing sounds
+        const winSound = new Audio('win.mp3');
+        const loseSound = new Audio('lose.mp3');
+        const tieSound = new Audio('tie.mp3');
+
+        // Initialize game statistics from local storage
+        let wins = parseInt(localStorage.getItem('wins')) || 0;
+        let losses = parseInt(localStorage.getItem('losses')) || 0;
+        let ties = parseInt(localStorage.getItem('ties')) || 0;
+
+        // Initialize high score from local storage
+        let highScore = parseInt(localStorage.getItem('highScore')) || 0;
+
+        // Call saveScores here to ensure any existing scores are saved
+        saveScores();
+
+        // Function to save scores to local storage
+        function saveScores() {
+            localStorage.setItem('wins', wins.toString());
+            localStorage.setItem('losses', losses.toString());
+            localStorage.setItem('ties', ties.toString());
+            localStorage.setItem('highScore', highScore.toString());
+        }
+
+        // Function to play sound based on game result
+        function playSound(result) {
+            let sound;
+            if (result === "win") {
+                sound = winSound;
+            } else if (result === "lose") {
+                sound = loseSound;
+            } else if (result === "tie") {
+                sound = tieSound;
+            }
+
+            if (sound) {
+                sound.play();
+                setTimeout(() => {
+                    sound.pause(); // Pause the sound
+                    sound.currentTime = 0; // Reset the sound to the beginning
+                }, 1200); // Adjust this duration (in milliseconds) as needed
+            }
+        }
+
+        // Function to update the UI with player's and computer's choices
+        function displayChoices(playerChoice, computerChoice) {
+            document.getElementById('playerChoice').innerHTML = `<img src="${playerChoice}.img" alt="${playerChoice}" style="width:100px; height:auto;">`;
+            document.getElementById('computerChoice').innerHTML = `<img src="${computerChoice}.img" alt="${computerChoice}" style="width:100px; height:auto;">`;
+        }
+
+        // Function to update the background
+        function updateBackground(result) {
+            const backgroundContainer = document.getElementById('backgroundContainer');
+            backgroundContainer.className = ''; // Clear previous classes
+            switch(result) {
+                case 'win':
+                    backgroundContainer.classList.add('background-win');
+                    break;
+                case 'lose':
+                    backgroundContainer.classList.add('background-lose');
+                    break;
+                case 'tie':
+                    backgroundContainer.classList.add('background-tie');
+                    break;
+                default:
+                    backgroundContainer.classList.add('background-neutral');
+            }
+        }
+
+        // Function to calculate the score based on wins, losses, and ties
+        function calculateScore() {
+            return wins * 3 + ties; // You can adjust this scoring logic as needed
+        }
+
+        // Function to update the scoreboard
+        function updateScoreboard() {
+            document.getElementById('wins').innerText = `Wins: ${wins}`;
+            document.getElementById('losses').innerText = `Losses: ${losses}`;
+            document.getElementById('ties').innerText = `Ties: ${ties}`;
+            document.getElementById('highScore').innerText = `High Score: ${highScore}`;
+        }
+
+        // Game logic
+        function playGame(playerChoice) {
+            const choices = ['rock', 'paper', 'scissors'];
+            const computerChoice = choices[Math.floor(Math.random() * choices.length)];
+            const result = determineWinner(playerChoice, computerChoice);
+
+            displayChoices(playerChoice, computerChoice);
+            document.getElementById('result').innerText = `Result: ${result}`;
+            playSound(result);
+            updateBackground(result); // Update background based on the game result
+
+            // Update scores and high score
+            if (result === 'win') {
+                wins++;
+            } else if (result === 'lose') {
+                losses++;
+            } else if (result === 'tie') {
+                ties++;
+            }
+
+            // Update and display the high score
+            if (calculateScore() > highScore) {
+                highScore = calculateScore();
+                document.getElementById('highScore').innerText = `High Score: ${highScore}`;
+            }
+
+            // Save scores to local storage
+            saveScores();
+
+            // Update the scoreboard
+            updateScoreboard();
+
+            return result; // Return the game result
+        }
+
+        // Determine the winner
+        function determineWinner(player, computer) {
+            if (player === computer) {
+                return 'tie';
+            } else if ((player === 'rock' && computer === 'scissors') ||
+                        (player === 'paper' && computer === 'rock') ||
+                        (player === 'scissors' && computer === 'paper')) {
+                return 'win';
+            } else {
+                return 'lose';
+            }
+        }
+
+        // Function to start the game when the Play button is clicked
+        function startGame() {
+            // Hide the splash screen
+            const splashScreen = document.getElementById('splashScreen');
+            splashScreen.style.display = 'none';
+
+            // Show the game container
+            const gameContainer = document.getElementById('gameContainer');
+            gameContainer.style.display = 'block';
+
+            // Now the game can start...
+        }
+
+        // Add event listener to the Play button
+        document.getElementById('playButton').addEventListener('click', startGame);
+
+        // Add event listeners to buttons
+        document.getElementById('rock').addEventListener('click', () => {
+            const playerChoice = 'rock';
+            const result = playGame(playerChoice);
+        });
+
+        document.getElementById('paper').addEventListener('click', () => {
+            const playerChoice = 'paper';
+            const result = playGame(playerChoice);
+        });
+
+        document.getElementById('scissors').addEventListener('click', () => {
+            const playerChoice = 'scissors';
+            const result = playGame(playerChoice);
+        });
+
+        // Update the scoreboard initially
+        updateScoreboard();
+    });
+
+</script>
+</body>
+</html>
